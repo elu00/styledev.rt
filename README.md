@@ -5,11 +5,4 @@
 ## Examples
 
 
-## Documentation
-/engine/:
-- /src/
-- /bin/
-- /assets/
-/demo/:
-- /src/
--/bin/
+## Usage
