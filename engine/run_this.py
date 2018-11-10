@@ -246,7 +246,11 @@ def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_tex
         print("Processing image %i out of %i; filename = %s" % (i, len(inputTextures), texture))
         # Storing the alpha channel for future use
         content = Image.open(texture)
-        alpha_img = content.getchannel('A')
+        hasAlpha = True
+        try:
+            alpha_img = content.getchannel('A')
+        except:
+            hasAlpha = False
         orig_dim = content.size
         content_img = content.resize([512,512], Image.ANTIALIAS).convert("RGB")
         content_img = image_loader(content_img)
@@ -263,7 +267,8 @@ def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_tex
         output = output.cpu().clone().detach().squeeze(0)
         output = transforms.ToPILImage()(output)
         output = output.resize(orig_dim, Image.ANTIALIAS)
-        output.putalpha(alpha_img)
+        if hasAlpha:
+            output.putalpha(alpha_img)
         output.save(texture, optimize = True)
         i += 1
         print("Style transferred!")
