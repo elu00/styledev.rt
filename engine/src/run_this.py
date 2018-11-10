@@ -87,7 +87,7 @@ class Normalization(nn.Module):
 content_layers_default = ['conv_4']
 style_layers_default = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
 def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
-                               style_img, content_img,
+                               style_img, content_img, device,
                                content_layers=content_layers_default,
                                style_layers=style_layers_default):
     cnn = copy.deepcopy(cnn)
@@ -153,12 +153,13 @@ def get_input_optimizer(input_img):
     return optimizer
 
 def run_style_transfer(cnn, normalization_mean, normalization_std,
-                       content_img, style_img, input_img, num_steps=300,
+                       content_img, style_img, input_img, device, num_steps=300,
                        style_weight=1000000, content_weight=1):
     """Run the style transfer."""
     print('Building the style transfer model..')
     model, style_losses, content_losses = get_style_model_and_losses(cnn,
-        normalization_mean, normalization_std, style_img, content_img)
+        normalization_mean, normalization_std, style_img, content_img,
+        device = device)
     optimizer = get_input_optimizer(input_img)
 
     print('Optimizing..')
@@ -223,9 +224,7 @@ def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
     loader = transforms.Compose([
         transforms.Resize(imsize),  # scale imported image
         transforms.ToTensor()])  # transform it into a torch tensor
-    unloader = transforms.ToPILImage()  # reconvert into PIL image
-    def image_loader(image_name):
-        image = Image.open(image_name)
+    def image_loader(image):
         # fake batch dimension required to fit network's input dimensions
         image = loader(image).unsqueeze(0)
         return image.to(device, torch.float)
@@ -233,25 +232,33 @@ def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
     cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(device)
     
-    inputTextures = [""]
-    i = 0
+    inputTextures = ["tex1_112x104_5b3ecb5994f06a03_14.png"]
+    i = 1
     for texture in inputTextures:
-        print("Processing image %i out of %i" % (i, len(inputTextures)), end = "")
+        print("Processing image %i out of %i" % (i, len(inputTextures)))
         # Storing the alpha channel for future use
-        #alpha_img = Image.open(texture).getchannel('A')
-        style_img = image_loader("picasso.jpg")
-        content_img = image_loader(texture)
+        content = Image.open(texture)
+        alpha_img = content.getchannel('A')
+        orig_dim = content.size
+        content_img = content.resize([512,512], Image.ANTIALIAS).convert("RGB")
+        content_img = image_loader(content_img)
         input_img = content_img.clone()
+        
+        # Do stuff with the style image
+        style_img = Image.open("picasso.jpg")
+        style_img = image_loader(style_img)
+
         # if you want to use white noise instead uncomment the below line:
         # input_img = torch.randn(content_img.data.size(), device=device)
-        print("style size =" + str(style_img.size()))
-        print("content size = " + str(content_img.size()))
         assert style_img.size() == content_img.size(), \
         "we need to import style and content images of the same size"
 
         output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
-                           content_img, style_img, input_img)
-        #output.putalpha(alpha)
+                           content_img, style_img, input_img, device = device)
+        output = output.cpu().clone().detach().squeeze(0)
+        output = transforms.ToPILImage()(output)
+        output = output.resize(orig_dim, Image.ANTIALIAS)
+        output.putalpha(alpha_img)
         output.save("test.png")
         i += 1
         print("Style transferred!")
