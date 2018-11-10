@@ -29,46 +29,6 @@ import copy
 import os
 
 
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# desired size of the output image
-imsize = 512 if torch.cuda.is_available() else 128  # use small size if no gpu
-
-loader = transforms.Compose([
-    transforms.Resize(imsize),  # scale imported image
-    transforms.ToTensor()])  # transform it into a torch tensor
-
-
-def image_loader(image_name):
-    image = Image.open(image_name)
-    # fake batch dimension required to fit network's input dimensions
-    image = loader(image).unsqueeze(0)
-    return image.to(device, torch.float)
-
-
-style_img = image_loader("./images/image1.jpg")
-content_img = image_loader("./images/image2.jpg")
-
-assert style_img.size() == content_img.size(), \
-    "we need to import style and content images of the same size"
-
-unloader = transforms.ToPILImage()  # reconvert into PIL image
-
-plt.ion()
-
-def imshow(tensor, title=None):
-    image = tensor.cpu().clone()  # we clone the tensor to not do changes on it
-    image = image.squeeze(0)      # remove the fake batch dimension
-    image = unloader(image)
-    plt.imshow(image)
-    if title is not None:
-        plt.title(title)
-    plt.pause(0.001) # pause a bit so that plots are updated
-
-
-#plt.figure()
-#mshow(content_img, title='Content Image')
 class ContentLoss(nn.Module):
 
     def __init__(self, target,):
@@ -97,12 +57,6 @@ def gram_matrix(input):
     return G.div(a * b * c * d)
 
 
-######################################################################
-# Now the style loss module looks almost exactly like the content loss
-# module. The style distance is also computed using the mean square
-# error between :math:`G_{XL}` and :math:`G_{SL}`.
-# 
-
 class StyleLoss(nn.Module):
 
     def __init__(self, target_feature):
@@ -113,11 +67,6 @@ class StyleLoss(nn.Module):
         G = gram_matrix(input)
         self.loss = F.mse_loss(G, self.target)
         return input
-
-cnn = models.vgg19(pretrained=True).features.to(device).eval()
-
-cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
-cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(device)
 
 # create a module to normalize input image so we can easily put it in a
 # nn.Sequential
@@ -134,11 +83,9 @@ class Normalization(nn.Module):
         # normalize img
         return (img - self.mean) / self.std
 
-
 # desired depth layers to compute style/content losses :
 content_layers_default = ['conv_4']
 style_layers_default = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
-
 def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
                                style_img, content_img,
                                content_layers=content_layers_default,
@@ -200,21 +147,6 @@ def get_style_model_and_losses(cnn, normalization_mean, normalization_std,
 
     return model, style_losses, content_losses
 
-
-######################################################################
-# Next, we select the input image. You can use a copy of the content image
-# or white noise.
-# 
-
-input_img = content_img.clone()
-# if you want to use white noise instead uncomment the below line:
-# input_img = torch.randn(content_img.data.size(), device=device)
-
-# add the original input image to the figure:
-plt.figure()
-imshow(input_img, title='Input Image')
-
-
 def get_input_optimizer(input_img):
     # this line to show that input is a parameter that requires a gradient
     optimizer = optim.LBFGS([input_img.requires_grad_()])
@@ -270,12 +202,6 @@ def run_style_transfer(cnn, normalization_mean, normalization_std,
     return input_img
 
 
-
-#output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
-#                            content_img, style_img, input_img)
-
-
-
 def recursiveGetFullPath(walk):
     list_of_stuff = []
     for dir in walk:
@@ -291,6 +217,44 @@ def find(name, path):
     return None
 
 def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # desired size of the output image
+    imsize = 512 if torch.cuda.is_available() else 128  # use small size if no gpu
+    loader = transforms.Compose([
+        transforms.Resize(imsize),  # scale imported image
+        transforms.ToTensor()])  # transform it into a torch tensor
+    unloader = transforms.ToPILImage()  # reconvert into PIL image
+    def image_loader(image_name):
+        image = Image.open(image_name)
+        # fake batch dimension required to fit network's input dimensions
+        image = loader(image).unsqueeze(0)
+        return image.to(device, torch.float)
+    cnn = models.vgg19(pretrained=True).features.to(device).eval()
+    cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
+    cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(device)
+    
+    inputTextures = [""]
+    i = 0
+    for texture in inputTextures:
+        print("Processing image %i out of %i" % (i, len(inputTextures)), end = "")
+        # Storing the alpha channel for future use
+        #alpha_img = Image.open(texture).getchannel('A')
+        style_img = image_loader("picasso.jpg")
+        content_img = image_loader(texture)
+        input_img = content_img.clone()
+        # if you want to use white noise instead uncomment the below line:
+        # input_img = torch.randn(content_img.data.size(), device=device)
+        print("style size =" + str(style_img.size()))
+        print("content size = " + str(content_img.size()))
+        assert style_img.size() == content_img.size(), \
+        "we need to import style and content images of the same size"
+
+        output = run_style_transfer(cnn, cnn_normalization_mean, cnn_normalization_std,
+                           content_img, style_img, input_img)
+        #output.putalpha(alpha)
+        output.save("test.png")
+        i += 1
+        print("Style transferred!")
     return
 
 if __name__ == "__main__":
