@@ -254,11 +254,11 @@ def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_tex
         orig_dim = content.size
         content_img = content.resize([512,512], Image.ANTIALIAS).convert("RGB")
         content_img = image_loader(content_img)
-        input_img = content_img.clone()
+        #input_img = content_img.clone()
         
 
         # if you want to use white noise instead uncomment the below line:
-        # input_img = torch.randn(content_img.data.size(), device=device)
+        input_img = torch.randn(content_img.data.size(), device=device)
         assert style_img.size() == content_img.size(), \
         "we need to import style and content images of the same size"
 
@@ -269,7 +269,7 @@ def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_tex
         output = output.resize(orig_dim, Image.ANTIALIAS)
         if hasAlpha:
             output.putalpha(alpha_img)
-        output.save(texture, optimize = True)
+        output.save(texture, optimize = True, quality = 60)
         i += 1
         print("Style transferred!")
     return
