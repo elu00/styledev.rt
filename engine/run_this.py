@@ -204,11 +204,11 @@ def run_style_transfer(cnn, normalization_mean, normalization_std,
 
 
 def recursiveGetFullPath(walk):
-    list_of_stuff = []
+    stuff = dict()
     for dir in walk:
         for file in dir[2]:
-            list_of_stuff += [dir[0] + '/' + file]
-    return list_of_stuff
+            stuff[file] = dir[0] + '/' + file
+    return stuff
 
 
 def find(name, path):
@@ -217,7 +217,7 @@ def find(name, path):
             return os.path.join(root, name)
     return None
 
-def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
+def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_textures = '../demo/modded_textures/G8M'):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # desired size of the output image
     imsize = 512 if torch.cuda.is_available() else 128  # use small size if no gpu
@@ -232,8 +232,16 @@ def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
     cnn_normalization_mean = torch.tensor([0.485, 0.456, 0.406]).to(device)
     cnn_normalization_std = torch.tensor([0.229, 0.224, 0.225]).to(device)
     
-    inputTextures = ["tex1_112x104_5b3ecb5994f06a03_14.png"]
+    dumpedTextures = os.listdir(path_to_dumped_textures)
     i = 1
+    dict_of_hq = recursiveGetFullPath(os.walk(path_to_actual_textures))
+    inputTextures = []
+    for key in dumpedTextures:
+        if key in dict_of_hq:
+            inputTextures.append(dict_of_hq[key])
+    # Preload style image
+    style_img = Image.open('../demo/style.jpg')
+    style_img = image_loader(style_img)
     for texture in inputTextures:
         print("Processing image %i out of %i" % (i, len(inputTextures)))
         # Storing the alpha channel for future use
@@ -244,9 +252,6 @@ def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
         content_img = image_loader(content_img)
         input_img = content_img.clone()
         
-        # Do stuff with the style image
-        style_img = Image.open("picasso.jpg")
-        style_img = image_loader(style_img)
 
         # if you want to use white noise instead uncomment the below line:
         # input_img = torch.randn(content_img.data.size(), device=device)
@@ -259,7 +264,7 @@ def main(path_to_dumped_textures = '', path_to_actual_textures = ''):
         output = transforms.ToPILImage()(output)
         output = output.resize(orig_dim, Image.ANTIALIAS)
         output.putalpha(alpha_img)
-        output.save("test.png")
+        output.save(texture, optimize = True)
         i += 1
         print("Style transferred!")
     return
