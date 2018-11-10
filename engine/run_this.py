@@ -243,7 +243,7 @@ def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_tex
     style_img = Image.open('../demo/style.jpg')
     style_img = image_loader(style_img)
     for texture in inputTextures:
-        print("Processing image %i out of %i" % (i, len(inputTextures)))
+        print("Processing image %i out of %i; filename = %s" % (i, len(inputTextures), texture))
         # Storing the alpha channel for future use
         content = Image.open(texture)
         alpha_img = content.getchannel('A')
