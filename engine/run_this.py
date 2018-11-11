@@ -20,7 +20,6 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 from PIL import Image
-import matplotlib.pyplot as plt
 
 import torchvision.transforms as transforms
 import torchvision.models as models
@@ -217,7 +216,7 @@ def find(name, path):
             return os.path.join(root, name)
     return None
 
-def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_textures = '../demo/modded_textures/G8M'):
+def main(path_to_dumped_textures = '../demo/dumped_textures', path_to_actual_textures = '../demo/base_textures/G8M'):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # desired size of the output image
     imsize = 512 if torch.cuda.is_available() else 128  # use small size if no gpu

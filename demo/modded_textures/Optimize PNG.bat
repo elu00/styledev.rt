@@ -1,0 +1,1 @@
+for /R %%a in ("*png") do optipng -o7 "%%a"
