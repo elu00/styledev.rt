@@ -8,7 +8,7 @@ However, while these algorithms have been adapted to [video content](https://www
 In this project, we offer true real-time style transfer through pre-computed "style transferred" modified game asset, rendering such assets in real time with the original game engine.
 ## Screenshots
 Base Style:
-![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/style.jpg?s=500)
+![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/style.jpg | width=500)
 ![Screenshot 1](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default1.png)
 ![Screenshot 2](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default2.png)
 ![Screenshot 3](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default3.png)
@@ -20,14 +20,14 @@ To run our modded first level of "Paper Mario: The Thousand Year Door":
 - Under Dolphin/Graphics Settings/Advanced, tick "Load Custom Textures"
 - Run TTYD from Dolphin
 ## Requirements
-Running this project depends on the following packages ( 
+Running this project depends on the following packages (available through conda or pip) 
 -  torch, torch.nn, numpy 
 -  torch.optim
 -  PIL, PIL.Image, 
 -  torchvision.transforms
 -  torchvision.models
 ## Usage
-1. Tick "dump textures" under Dolphin/Graphics/Advanced. Then play through the desired level(s).  
+1. Tick "dump textures" under Dolphin/Graphics/Advanced. Then play through the desired level(s) that you wish to mod/style transfer onto.  
 2. Run 
 ```
 python run_this.py
@@ -35,5 +35,5 @@ python run_this.py
 in your terminal of choice. 
 By default, this uses the textures listed in `demo/dumped_textures` to determine which textures to replace/style on, searching through all the files listed in `demo/base_textures` and replacing them in-place. 
 Then follow the instructions for the demo.
-## Thanks
-
+## Credits
+Thanks to [The Dolphin Community TTYD Texture pack](https://forums.dolphin-emu.org/Thread-paper-mario-ttyd-hd-texture-pack-v1-7-july-4-2018), [Alexis Jacq et. al](https://pytorch.org/tutorials/advanced/neural_style_tutorial.html), and the Dolphin Team.
