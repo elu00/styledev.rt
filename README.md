@@ -8,7 +8,7 @@ However, while these algorithms have been adapted to [video content](https://www
 In this project, we offer true real-time style transfer through pre-computed "style transferred" modified game asset, rendering such assets in real time with the original game engine.
 ## Screenshots
 Base Style:
-![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/style.jpg | width=500)
+![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/baseStyle.jpg)
 ![Screenshot 1](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default1.png)
 ![Screenshot 2](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default2.png)
 ![Screenshot 3](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default3.png)
@@ -33,7 +33,7 @@ Running this project depends on the following packages (available through conda 
 python run_this.py
 ```
 in your terminal of choice. 
-By default, this uses the textures listed in `demo/dumped_textures` to determine which textures to replace/style on, searching through all the files listed in `demo/base_textures` and replacing them in-place. 
-Then follow the instructions for the demo.
+By default, this uses the textures listed in `demo/dumped_textures` to determine which textures to replace/style on, searching through all the files listed in `demo/base_textures` and replacing them in-place. The style to be used is computed from "demo/style.jpg." 
+After doing this, follow the instructions for running the demo.
 ## Credits
 Thanks to [The Dolphin Community TTYD Texture pack](https://forums.dolphin-emu.org/Thread-paper-mario-ttyd-hd-texture-pack-v1-7-july-4-2018), [Alexis Jacq et. al](https://pytorch.org/tutorials/advanced/neural_style_tutorial.html), and the Dolphin Team.
