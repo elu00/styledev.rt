@@ -5,7 +5,7 @@
 By training a neural network to quantify such styles, it's possible to "transfer" the style of one image onto another, creating a variety of interesting results, including ["Deep Fakes'](https://www.cmu.edu/news/stories/archives/2018/september/deep-fakes-video-content.html) and other forms of content.
 
 However, while these algorithms have been adapted to [video content](https://www.youtube.com/watch?v=Khuj4ASldmU), including some working demos on [live video feeds](https://www.youtube.com/watch?v=vAelubuwquE), such techniques often remain computationally infeasible, requiring anywhere from seconds to minutes to process a single frame on typical hardware. 
-In this project, we offer true real-time style transfer through pre-computed "style transferred" modified game asset, rendering such assets in real time with the original game engine.
+In this project, we offer true real-time style transfer through pre-computed "style transferred" modified game assets, rendering such assets in real time with the original game engine.
 ## Screenshots
 Base Style:
 ![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/baseStyle.jpg)
@@ -20,6 +20,7 @@ To run our modded first level of "Paper Mario: The Thousand Year Door":
 - Under Dolphin/Graphics Settings/Advanced, tick "Load Custom Textures"
 - Run TTYD from Dolphin
 ## Requirements
+(For recomputing results/changing paramters/textures, etc.)
 Running this project depends on the following packages (available through conda or pip) 
 -  torch, torch.nn, numpy 
 -  torch.optim
@@ -35,5 +36,9 @@ python run_this.py
 in your terminal of choice. 
 By default, this uses the textures listed in `demo/dumped_textures` to determine which textures to replace/style on, searching through all the files listed in `demo/base_textures` and replacing them in-place. The style to be used is computed from "demo/style.jpg." 
 After doing this, follow the instructions for running the demo.
+## Future Extensions
+- Style transferring 3D assets, using UV projection information for perservation of spatial features
+- Application to other games/engines
+- Other neural style transfer algorithms
 ## Credits
 Thanks to [The Dolphin Community TTYD Texture pack](https://forums.dolphin-emu.org/Thread-paper-mario-ttyd-hd-texture-pack-v1-7-july-4-2018), [Alexis Jacq et. al](https://pytorch.org/tutorials/advanced/neural_style_tutorial.html), and the Dolphin Team.
