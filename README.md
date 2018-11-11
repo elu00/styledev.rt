@@ -7,7 +7,8 @@ By training a neural network to quantify such styles, it's possible to "transfer
 However, while these algorithms have been adapted to [video content](https://www.youtube.com/watch?v=Khuj4ASldmU), including some working demos on [live video feeds](https://www.youtube.com/watch?v=vAelubuwquE), such techniques often remain computationally infeasible, requiring anywhere from seconds to minutes to process a single frame on typical hardware. 
 In this project, we offer true real-time style transfer through pre-computed "style transferred" modified game asset, rendering such assets in real time with the original game engine.
 ## Screenshots
-![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/style.jpg)
+Base Style:
+![Base Style](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/style.jpg?s=500)
 ![Screenshot 1](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default1.png)
 ![Screenshot 2](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default2.png)
 ![Screenshot 3](https://raw.githubusercontent.com/elu00/styledev.rt/master/demo/screenshots/Default3.png)
